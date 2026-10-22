@@ -1,0 +1,506 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevPortal | Login & Signup</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+    --primary: #6366f1;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #475569;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.auth-card {
+    width: 90%;
+    max-width: 410px;
+    margin: 45px auto;
+    padding: 30px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    box-shadow: 0 15px 35px #0004;
+}
+
+.brand {
+    text-align: center;
+    color: #a5b4fc;
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 7px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: #334155;
+    color: white;
+    outline: none;
+}
+
+input:focus { border-color: var(--primary); }
+
+.btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 7px;
+}
+
+.btn:hover { background: #4f46e5; }
+
+.full { width: 100%; margin-top: 22px; }
+
+.switch {
+    text-align: center;
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.link {
+    color: #a5b4fc;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}
+
+.hidden { display: none !important; }
+
+/* Dashboard */
+header {
+    background: var(--card);
+    padding: 18px 25px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+header h2 { color: #a5b4fc; margin: 0; }
+
+nav { display: flex; flex-wrap: wrap; gap: 8px; }
+
+nav button {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+}
+
+nav button.active, nav button:hover { background: var(--primary); }
+
+main { max-width: 1100px; margin: auto; padding: 30px 20px; }
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.card, .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 12px;
+}
+
+.card h3 { color: #a5b4fc; }
+.card p, .muted { color: var(--muted); line-height: 1.6; }
+.status { color: #4ade80; }
+
+#displayName { margin: 10px 0; }
+
+/* Error and success pop-ups */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: min(360px, calc(100% - 40px));
+    padding: 16px;
+    border-radius: 10px;
+    background: #7f1d1d;
+    color: white;
+    box-shadow: 0 8px 25px #0005;
+    z-index: 100;
+    animation: appear .25s ease-out;
+}
+
+.toast.success { background: #166534; }
+
+.toast button {
+    float: right;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width: 700px) {
+    header { flex-direction: column; align-items: flex-start; }
+    .cards { grid-template-columns: 1fr; }
+    main { padding: 20px 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIGN IN -->
+<section id="signin" class="auth-card">
+    <h1 class="brand">DevPortal</h1>
+    <p class="subtitle">Welcome back! Sign in to your account.</p>
+
+    <form id="signinForm" novalidate>
+        <label for="loginEmail">Developer Email</label>
+        <input type="email" id="loginEmail"
+               placeholder="name@company.com" autocomplete="email">
+
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword"
+               placeholder="Enter your password"
+               autocomplete="current-password">
+
+        <button type="submit" class="btn full">Sign In</button>
+    </form>
+
+    <p class="switch">
+        Don't have an account?
+        <button class="link" type="button" data-auth="signup">Sign Up</button>
+    </p>
+</section>
+
+<!-- SIGN UP -->
+<section id="signup" class="auth-card hidden">
+    <h1 class="brand">Create Account</h1>
+    <p class="subtitle">Join the DevPortal developer community.</p>
+
+    <form id="signupForm" novalidate>
+        <label for="signupName">Full Name</label>
+        <input type="text" id="signupName"
+               placeholder="Enter your full name" autocomplete="name">
+
+        <label for="signupEmail">Email Address</label>
+        <input type="email" id="signupEmail"
+               placeholder="name@company.com" autocomplete="email">
+
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword"
+               placeholder="At least 6 characters"
+               autocomplete="new-password">
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword"
+               placeholder="Enter password again"
+               autocomplete="new-password">
+
+        <button type="submit" class="btn full">Create Account</button>
+    </form>
+
+    <p class="switch">
+        Already have an account?
+        <button class="link" type="button" data-auth="signin">Sign In</button>
+    </p>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="hidden">
+    <header>
+        <h2>DevPortal</h2>
+        <nav>
+            <button class="active" data-page="home">Dashboard</button>
+            <button data-page="profile">My Profile</button>
+            <button data-page="projects">My Projects</button>
+            <button data-page="settings">Settings</button>
+            <button id="logout" class="btn">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="page">
+            <h1>Welcome, <span id="welcomeName">Developer</span>!</h1>
+            <p class="muted">You have successfully signed in.</p>
+            <p class="status">● Account session active</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h3>My Profile</h3>
+                    <p>View your personal and account details.</p>
+                    <button class="btn" data-go="profile">View Profile</button>
+                </div>
+
+                <div class="card">
+                    <h3>My Projects</h3>
+                    <p>Track your mobile app development projects.</p>
+                    <button class="btn" data-go="projects">View Projects</button>
+                </div>
+
+                <div class="card">
+                    <h3>Settings</h3>
+                    <p>Update your dashboard display name.</p>
+                    <button class="btn" data-go="settings">Open Settings</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="profile" class="page hidden">
+            <h1>My Profile</h1>
+            <div class="panel">
+                <p><strong>Name:</strong> <span id="profileName"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Role:</strong> Mobile App Developer</p>
+                <button class="btn" data-go="home">Back to Dashboard</button>
+            </div>
+        </section>
+
+        <section id="projects" class="page hidden">
+            <h1>My Projects</h1>
+            <div class="cards">
+                <div class="card">
+                    <h3>Mobile Application</h3>
+                    <p>Develop a user-friendly mobile app.</p>
+                    <p class="status">Status: In Progress</p>
+                </div>
+                <div class="card">
+                    <h3>Login System</h3>
+                    <p>Build account registration and sign-in screens.</p>
+                    <p class="status">Status: Completed</p>
+                </div>
+                <div class="card">
+                    <h3>Developer Portal</h3>
+                    <p>Manage development work in one place.</p>
+                    <p class="status">Status: In Progress</p>
+                </div>
+            </div>
+            <br>
+            <button class="btn" data-go="home">Back to Dashboard</button>
+        </section>
+
+        <section id="settings" class="page hidden">
+            <h1>Settings</h1>
+            <div class="panel">
+                <label for="displayName">Display Name</label>
+                <input id="displayName" placeholder="Enter display name">
+                <button id="saveSettings" class="btn full">Save Settings</button>
+                <br><br>
+                <button class="btn" data-go="home">Back to Dashboard</button>
+            </div>
+        </section>
+    </main>
+</section>
+
+<!-- POP-UP -->
+<div id="toast" class="toast hidden" role="alert" aria-live="assertive">
+    <button id="closeToast" aria-label="Close">×</button>
+    <strong id="toastTitle">Error</strong>
+    <div id="toastMessage"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let currentUser = null;
+
+// Demo account storage: accounts exist only in this browser session.
+let users = [];
+
+function popup(message, success = false) {
+    $("toastTitle").textContent = success ? "Success" : "Login / Signup Error";
+    $("toastMessage").textContent = message;
+    $("toast").classList.toggle("success", success);
+    $("toast").classList.remove("hidden");
+
+    clearTimeout(popup.timer);
+    popup.timer = setTimeout(() => $("toast").classList.add("hidden"), 3500);
+}
+
+$("closeToast").addEventListener("click", () => {
+    $("toast").classList.add("hidden");
+});
+
+function showAuth(name) {
+    $("signin").classList.toggle("hidden", name !== "signin");
+    $("signup").classList.toggle("hidden", name !== "signup");
+    $("dashboard").classList.add("hidden");
+    $("signinForm").reset();
+    $("signupForm").reset();
+    $("toast").classList.add("hidden");
+}
+
+document.querySelectorAll("[data-auth]").forEach(button => {
+    button.addEventListener("click", () => showAuth(button.dataset.auth));
+});
+
+// Sign up validation
+$("signupForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const name = $("signupName").value.trim();
+    const email = $("signupEmail").value.trim().toLowerCase();
+    const password = $("signupPassword").value;
+    const confirm = $("confirmPassword").value;
+
+    if (!name || !email || !password || !confirm) {
+        popup("Please fill in all the sign-up fields.");
+        return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        popup("Please enter a valid email address.");
+        return;
+    }
+
+    if (password.length < 6) {
+        popup("Password must contain at least 6 characters.");
+        return;
+    }
+
+    if (password !== confirm) {
+        popup("Passwords do not match. Please try again.");
+        return;
+    }
+
+    if (users.some(user => user.email === email)) {
+        popup("This email is already registered. Please sign in.");
+        return;
+    }
+
+    users.push({ name, email, password });
+
+    $("loginEmail").value = email;
+    showAuth("signin");
+    popup("Account created! Please sign in.", true);
+});
+
+// Sign in validation
+$("signinForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const email = $("loginEmail").value.trim().toLowerCase();
+    const password = $("loginPassword").value;
+
+    if (!email || !password) {
+        popup("Please enter both your email and password.");
+        return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        popup("Please enter a valid email address.");
+        return;
+    }
+
+    const user = users.find(
+        account => account.email === email &&
+                   account.password === password
+    );
+
+    if (!user) {
+        popup("Incorrect email or password. Sign up first or try again.");
+        return;
+    }
+
+    currentUser = { name: user.name, email: user.email };
+    openDashboard();
+});
+
+function openDashboard() {
+    $("signin").classList.add("hidden");
+    $("signup").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+
+    $("welcomeName").textContent = currentUser.name;
+    $("profileName").textContent = currentUser.name;
+    $("profileEmail").textContent = currentUser.email;
+    $("displayName").value = currentUser.name;
+
+    showPage("home");
+    popup("Welcome! You have signed in successfully.", true);
+}
+
+function showPage(pageName) {
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.add("hidden");
+    });
+
+    $(pageName).classList.remove("hidden");
+
+    document.querySelectorAll("nav [data-page]").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === pageName);
+    });
+}
+
+document.querySelectorAll("nav [data-page]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+document.querySelectorAll("[data-go]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.go));
+});
+
+$("saveSettings").addEventListener("click", () => {
+    const name = $("displayName").value.trim();
+
+    if (!name) {
+        popup("Display name cannot be empty.");
+        return;
+    }
+
+    currentUser.name = name;
+    $("welcomeName").textContent = name;
+    $("profileName").textContent = name;
+
+    const user = users.find(account => account.email === currentUser.email);
+    if (user) user.name = name;
+
+    popup("Display name updated successfully.", true);
+});
+
+$("logout").addEventListener("click", () => {
+    currentUser = null;
+    showAuth("signin");
+    popup("You have signed out successfully.", true);
+});
+</script>
+
+</body>
+</html>
